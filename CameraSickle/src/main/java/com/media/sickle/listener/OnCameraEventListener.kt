@@ -16,23 +16,8 @@
  *
  */
 
-package com.media.sickle.utils
+package com.media.sickle.listener
 
-import android.content.Context
-import com.media.sickle.DEFAULT_NAME
-import com.media.sickle.R
-import java.io.File
-
-object MediaSickleUtils {
-
-    const val TAG = "Media-Sickle"
-
-    fun getOutputDirectory(context: Context, name: String = DEFAULT_NAME): File {
-        val appContext = context.applicationContext
-        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-            File(it, name).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else appContext.filesDir
-    }
+fun interface OnCameraEventListener {
+    fun onClick(any: Any)
 }

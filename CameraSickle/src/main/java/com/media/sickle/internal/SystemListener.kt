@@ -16,23 +16,10 @@
  *
  */
 
-package com.media.sickle.utils
+package com.media.sickle.internal
 
-import android.content.Context
-import com.media.sickle.DEFAULT_NAME
-import com.media.sickle.R
-import java.io.File
+import android.content.res.Configuration
 
-object MediaSickleUtils {
-
-    const val TAG = "Media-Sickle"
-
-    fun getOutputDirectory(context: Context, name: String = DEFAULT_NAME): File {
-        val appContext = context.applicationContext
-        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-            File(it, name).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else appContext.filesDir
-    }
+interface SystemListener {
+    fun onConfigurationChanged(newConfig: Configuration)
 }

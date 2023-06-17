@@ -20,5 +20,12 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.media.sickle.test", appContext.packageName)
+
+        MediaSickle.Builder(appContext)
+            .withProjectName("测试")
+            .build()
+
+
+        MediaSickle.with()
     }
 }

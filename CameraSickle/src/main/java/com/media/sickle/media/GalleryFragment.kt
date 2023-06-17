@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 The Android Open Source Project
+ *  Copyright 2023 The MediaSickle
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.media.sickle.databinding.FragmentGalleryBinding
+val EXTENSION_WHITELIST = arrayOf("JPG")
 
 /**
  * An example full-screen fragment that shows and hides the system UI (i.e.

@@ -18,21 +18,16 @@
 
 package com.media.sickle.utils
 
-import android.content.Context
-import com.media.sickle.DEFAULT_NAME
-import com.media.sickle.R
-import java.io.File
+import android.widget.ImageButton
 
-object MediaSickleUtils {
-
-    const val TAG = "Media-Sickle"
-
-    fun getOutputDirectory(context: Context, name: String = DEFAULT_NAME): File {
-        val appContext = context.applicationContext
-        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-            File(it, name).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else appContext.filesDir
-    }
+const val ANIMATION_FAST_MILLIS = 50L
+const val ANIMATION_SLOW_MILLIS = 100L
+fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
+    performClick()
+    isPressed = true
+    invalidate()
+    postDelayed({
+        invalidate()
+        isPressed = false
+    }, delay)
 }

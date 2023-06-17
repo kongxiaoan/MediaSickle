@@ -1,7 +1,7 @@
 <!--
   ~ /*
   ~  *
-  ~  *  Copyright 2020 The Android Open Source Project
+  ~  *  Copyright 2023 The MediaSickle
   ~  *
   ~  *  Licensed under the Apache License, Version 2.0 (the "License");
   ~  *  you may not use this file except in compliance with the License.
@@ -24,4 +24,11 @@
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:immersive">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
 </resources>

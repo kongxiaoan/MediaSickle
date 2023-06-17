@@ -1,5 +1,5 @@
 /*
- *  Copyright 2020 The Android Open Source Project
+ *  Copyright 2023 The MediaSickle
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,21 +22,29 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.hardware.display.DisplayManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.window.WindowManager
-import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.media.sickle.KEY_EVENT_ACTION
 import com.media.sickle.KEY_EVENT_EXTRA
 import com.media.sickle.R
+import com.media.sickle.base.BaseFragment
+import com.media.sickle.databinding.CameraUiControllerBinding
 import com.media.sickle.databinding.FragmentCameraBinding
+import com.media.sickle.emnus.CameraControlsType
 import com.media.sickle.permission.PermissionFragment
+import com.media.sickle.utils.CameraXManager
+import com.media.sickle.utils.MediaSickleUtils
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -44,43 +52,14 @@ import java.util.concurrent.Executors
  * An example full-screen fragment that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-class CameraFragment : Fragment() {
+class CameraFragment : BaseFragment() {
     private var _binding: FragmentCameraBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var cameraUiControllerBinding: CameraUiControllerBinding? = null
     private val binding get() = _binding!!
-    private var displayId: Int = -1
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var broadcastManager: LocalBroadcastManager
-    private lateinit var windowManager: WindowManager
 
-    private val volumeDownReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getIntExtra(KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN)) {
-                KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                    // 按下音量键 进行拍照
-
-                }
-            }
-        }
-    }
-
-    private val displayListener = object : DisplayManager.DisplayListener {
-        override fun onDisplayAdded(displayId: Int) = Unit
-
-        override fun onDisplayRemoved(displayId: Int) = Unit
-
-        override fun onDisplayChanged(displayId: Int) = view?.let {
-            if (displayId == this@CameraFragment.displayId) {
-                // 屏幕方向发生变化时，更新对于策略
-            } ?: Unit
-        }
-
-    }
-
-    private val displayManager by lazy {
-        requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    private val cameraXManager by lazy {
+        CameraXManager(this)
     }
 
     override fun onCreateView(
@@ -95,30 +74,36 @@ class CameraFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        broadcastManager = LocalBroadcastManager.getInstance(view.context)
-
-        val filter = IntentFilter().apply {
-            addAction(KEY_EVENT_ACTION)
-        }
-        broadcastManager.registerReceiver(volumeDownReceiver, filter)
-        displayManager.registerDisplayListener(displayListener, null)
-        windowManager = WindowManager(view.context)
-
         binding.viewFinder.post {
-            displayId = binding.viewFinder.display.displayId
             updateCameraUI()
             setUpCamera()
         }
     }
 
-    private fun setUpCamera() {
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        systemListener?.onConfigurationChanged(newConfig)
+    }
+
+
+    private fun setUpCamera() {
+        cameraXManager.startCamera(binding.viewFinder, CameraControlsType.TAKE_PICTURE)
     }
 
     private fun updateCameraUI() {
+        cameraUiControllerBinding?.root?.let {
+            binding.root.removeView(it)
+        }
 
+        cameraUiControllerBinding = CameraUiControllerBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            binding.root,
+            true
+        )
+        cameraXManager.updateController(cameraUiControllerBinding!!)
+        lifecycle.addObserver(cameraXManager)
+        registerSystemListener(cameraXManager)
     }
 
     override fun onResume() {

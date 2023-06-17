@@ -1,5 +1,6 @@
 package com.media.sickle
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -17,6 +18,8 @@ class MainActivity : AppCompatActivity() {
 
         // Example of a call to a native method
         binding.sampleText.text = stringFromJNI()
+
+        startActivity(Intent(this, MediaSickleActivity::class.java))
     }
 
     /**
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     external fun stringFromJNI(): String
 
     companion object {
+
         // Used to load the 'sickle' library on application startup.
         init {
             System.loadLibrary("sickle")
