@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MediaSickle"
 include(":app")
- 
+include(":CameraSickle")
