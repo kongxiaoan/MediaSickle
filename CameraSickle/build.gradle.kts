@@ -17,7 +17,9 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         externalNativeBuild {
             cmake {
-                cppFlags("")
+                cppFlags("-std=c++17")
+                arguments("-DANDROID_STL=c++_shared")
+                abiFilters("armeabi-v7a", "arm64-v8a")
             }
         }
     }
@@ -33,7 +35,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path("src/main/cpp/CMakeLists.txt")
+            path("CMakeLists.txt")
             version = "3.22.1"
         }
     }

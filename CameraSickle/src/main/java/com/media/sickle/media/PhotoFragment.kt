@@ -18,14 +18,24 @@
 
 package com.media.sickle.media
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.media.sickle.NativeLib
 import com.media.sickle.R
 import com.media.sickle.base.BaseFragment
+import com.media.sickle.widget.MediaSickleImageView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class PhotoFragment internal constructor() : BaseFragment() {
@@ -34,14 +44,21 @@ class PhotoFragment internal constructor() : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = ImageView(context)
+    ): View = MediaSickleImageView(requireContext())
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments ?: return
         val resource = args.getString(FILE_NAME_KEY)?.let { File(it) } ?: R.drawable.ic_photo
-        Glide.with(view).load(resource).into(view as ImageView)
+        if (view is MediaSickleImageView) {
+            Glide.with(view).asBitmap().load(resource).into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    view.bindBitmap(resource)
+                    view.setImageBitmap(resource)
+                }
+            })
+        }
     }
 
 
