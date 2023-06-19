@@ -20,6 +20,9 @@ package com.media.sickle.widget
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import com.media.sickle.NativeLib
@@ -27,9 +30,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.sqrt
+
 
 class MediaSickleImageView(context: Context) : AppCompatImageView(context) {
     private var bitmap: Bitmap? = null
+    private var startPoint: PointF? = null
+    private var startDistance = 0f
+    private var scaleFactor = 0f
+    private var matrix: Matrix? = null
 
     fun bindBitmap(bitmap: Bitmap) {
         this.bitmap = bitmap
@@ -37,59 +46,39 @@ class MediaSickleImageView(context: Context) : AppCompatImageView(context) {
 
     init {
         isClickable = true
+        matrix = Matrix()
+        startPoint = PointF()
+        startDistance = 0.0f
+        scaleFactor = 1.0f
+        scaleType = ScaleType.MATRIX
     }
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                // 处理移动事件
-
-                // 处理移动事件
-                if (event.pointerCount == 2) {
-                    // 获取两个手指的坐标
-                    val x1 = event.getX(0)
-                    val y1 = event.getY(0)
-                    val x2 = event.getX(1)
-                    val y2 = event.getY(1)
-
-                    // 计算缩放值
-                    val currentDistance: Float = getDistanceBetweenPoints(x1, y1, x2, y2)
-                    val previousDistance: Float = getPreviousDistance(event)
-                    val scale = currentDistance / previousDistance
-
-                    // 处理缩放值
-                    handleScale(scale)
-                }
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> startPoint!![event.x] = event.y
+            MotionEvent.ACTION_POINTER_DOWN -> startDistance = getDistance(event)
+            MotionEvent.ACTION_MOVE -> if (event.pointerCount >= 2) {
+                val currentDistance = getDistance(event)
+                scaleFactor *= currentDistance / startDistance
+                startDistance = currentDistance
+                matrix?.reset();
+                matrix?.postScale(scaleFactor, scaleFactor, getWidth() / 2f, getHeight() / 2f);
+                setImageMatrix(matrix);
+//                handleScale(scaleFactor)
             }
         }
-        return super.onTouchEvent(event)
+        return true
     }
 
-    private fun getDistanceBetweenPoints(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        val dx = x1 - x2
-        val dy = y1 - y2
-        return Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
-    }
-
-    private fun getPreviousDistance(event: MotionEvent): Float {
-        // 获取前一次事件的历史记录
-        val historySize = event.historySize
-        if (historySize > 0) {
-            val x1 = event.getHistoricalX(0, historySize - 1)
-            val y1 = event.getHistoricalY(0, historySize - 1)
-            val x2 = event.getHistoricalX(1, historySize - 1)
-            val y2 = event.getHistoricalY(1, historySize - 1)
-            return getDistanceBetweenPoints(x1, y1, x2, y2)
-        }
-        return 0F
+    private fun getDistance(event: MotionEvent): Float {
+        val dx = event.getX(0) - event.getX(1)
+        val dy = event.getY(0) - event.getY(1)
+        return sqrt((dx * dx + dy * dy).toDouble()).toFloat()
     }
 
     private fun handleScale(scale: Float) {
+        Log.d("handleScale", "scale = $scale")
         // 在此处处理缩放值
         // 可以将缩放值应用于自定义视图或执行其他操作
         bitmap?.let {

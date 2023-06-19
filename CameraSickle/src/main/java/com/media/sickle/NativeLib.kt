@@ -1,6 +1,7 @@
 package com.media.sickle
 
 import android.graphics.Bitmap
+import android.util.Log
 
 object NativeLib {
 
@@ -13,8 +14,9 @@ object NativeLib {
 
 
     // Used to load the 'sickle' library on application startup.
-    init {
-        System.loadLibrary("sickle")
+    fun init() {
+        Log.d("NativeLib", "加载so库")
+        System.loadLibrary("media_sickle")
     }
 
 }

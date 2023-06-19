@@ -35,6 +35,7 @@ class MediaSickleActivity : BaseActivity() {
     private lateinit var binding: ActivityMediaSickleBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        NativeLib.init()
         binding = ActivityMediaSickleBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }

@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.10.2)
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
 # build script scope).
-project("sickle")
+project("media_sickle")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -34,7 +34,7 @@ find_library( # Sets the name of the path variable.
 
 
 set(libs "${CMAKE_CURRENT_SOURCE_DIR}/src/main/jnilibs")
-message(test-------- src/main/cpp)
+message("libs " ${libs})
 #导入libopencv_java4库文件
 add_library(libopencv
         SHARED
@@ -44,8 +44,9 @@ set_target_properties(
         PROPERTIES IMPORTED_LOCATION
         "${libs}/${ANDROID_ABI}/libopencv_java4.so")
 
+message("source_dir" ${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src/main/cpp/include)
-find_library(android-lib android )
+message("name "  ${CMAKE_PROJECT_NAME})
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
@@ -57,5 +58,4 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         ${jnigraphics-lib}
         # Links the target library to the log library
         # included in the NDK.
-        ${android-lib}
         )

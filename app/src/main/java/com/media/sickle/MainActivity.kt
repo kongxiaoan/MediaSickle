@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         // Used to load the 'sickle' library on application startup.
         init {
             System.loadLibrary("sickle")
+            System.loadLibrary("media_sickle")
         }
     }
 }

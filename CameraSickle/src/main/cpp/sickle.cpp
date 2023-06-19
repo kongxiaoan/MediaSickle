@@ -5,8 +5,12 @@
 #include <android/log.h>
 
 using namespace cv;
-#define LOG_TAG "AndroidScalingalgorithmforimage"
+#define LOG_TAG "MediaSickleTag"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+
+
+jobject createBitmap(JNIEnv *env, int new_width, int new_height);
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_media_sickle_NativeLib_stringFromJNI(
         JNIEnv *env,
