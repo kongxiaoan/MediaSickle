@@ -26,6 +26,6 @@ class ExampleInstrumentedTest {
             .build()
 
 
-        MediaSickle.with()
+        MediaSickle.with().openCamera()
     }
 }

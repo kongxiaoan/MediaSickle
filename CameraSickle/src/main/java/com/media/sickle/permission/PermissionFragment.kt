@@ -74,8 +74,8 @@ class PermissionFragment : BaseFragment() {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
                 // 授权成功
+                navigateToCamera()
             } else {
-
                 //用户拒绝授权
             }
         }

@@ -19,6 +19,7 @@
 package com.media.sickle
 
 import android.content.Context
+import android.content.Intent
 import com.media.sickle.utils.MediaSickleUtils
 import java.io.File
 
@@ -35,6 +36,11 @@ class MediaSickle private constructor(builder: Builder) {
 
     var projectName = builder.getProjectName()
 
+
+    fun openCamera(context: Context) {
+        context.startActivity(Intent(context, MediaSickleActivity::class.java))
+    }
+
     companion object {
 
         private lateinit var INSTANCE: MediaSickle
@@ -49,7 +55,7 @@ class MediaSickle private constructor(builder: Builder) {
         internal fun isInstalled() = this::INSTANCE.isInitialized
 
         fun with(): MediaSickle {
-            if (isInstalled()) {
+            if (!isInstalled()) {
                 throw RuntimeException("未初始化")
             }
             return INSTANCE

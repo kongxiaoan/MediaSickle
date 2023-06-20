@@ -17,9 +17,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI()
-
-        startActivity(Intent(this, MediaSickleActivity::class.java))
+        binding.openCamera.setOnClickListener {
+            MediaSickle.with().openCamera(this)
+        }
     }
 
     /**
